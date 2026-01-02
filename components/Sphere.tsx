@@ -16,8 +16,10 @@ export const Sphere: React.FC<SphereProps> = ({ colorClass, className = "w-8 h-8
                 w-[85%] h-[85%] rounded-full relative
                 transition-all duration-300
                 ${isGhost ? 'opacity-30 blur-[1px]' : 'opacity-100'} 
-                ${isLocked ? 'brightness-50 saturate-50' : ''}
-                ${colorClass}
+                ${isLocked 
+                    ? `!border-yellow-600 !shadow-[0_0_8px_rgba(202,138,4,0.4)] ${colorClass.split(' ').filter(c => !c.startsWith('border') && !c.startsWith('shadow')).join(' ')}` 
+                    : colorClass
+                }
                 border-2
             `}
         >
@@ -26,9 +28,14 @@ export const Sphere: React.FC<SphereProps> = ({ colorClass, className = "w-8 h-8
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] bg-white rounded-full shadow-[0_0_10px_white] opacity-90"></div>
             )}
             
-            {/* Locked Indicator (Bolt) */}
+            {/* Locked Indicator (Darker Bronze/Gold Core) */}
             {isLocked && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30%] h-[30%] bg-black/50 rounded-full border border-white/20"></div>
+                <>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%] bg-yellow-600 rounded-full shadow-[0_0_5px_#713f12] z-10 opacity-90"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[20%] h-[20%] bg-yellow-950 rounded-full z-20"></div>
+                    {/* Metallic highlight on the bolt */}
+                    <div className="absolute top-[35%] left-[35%] w-[10%] h-[10%] bg-yellow-200 rounded-full z-30 opacity-60"></div>
+                </>
             )}
             
             {/* Tech Scanlines / Grid Detail inside the orb (Optional detail for closeups) */}

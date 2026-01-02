@@ -29,12 +29,73 @@ interface GhostState {
   isValid: boolean;
 }
 
+// --- Components ---
+
+const HelpModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+    return (
+        <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+            <div className="bg-[#0f1014] border border-cyan-500/50 rounded-xl max-w-md w-full p-6 shadow-[0_0_50px_rgba(6,182,212,0.2)] relative">
+                <button onClick={onClose} className="absolute top-4 right-4 text-cyan-700 hover:text-cyan-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                
+                <h2 className="text-xl md:text-2xl font-bold text-cyan-400 mb-6 tracking-widest border-b border-cyan-900/50 pb-2">
+                    OPERATIONS / 操作指南
+                </h2>
+
+                <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 shrink-0 rounded-full bg-cyan-900/30 border border-cyan-500/30 flex items-center justify-center text-2xl">👆</div>
+                        <div>
+                            <h3 className="text-cyan-100 font-bold mb-1">Move / 移动</h3>
+                            <p className="text-sm text-slate-400">Drag any piece to move it. Place it on the grid holes.<br/>拖动任意零件移动，放置在网格孔位上。</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 shrink-0 rounded-full bg-cyan-900/30 border border-cyan-500/30 flex items-center justify-center text-2xl">✌️</div>
+                        <div>
+                            <h3 className="text-cyan-100 font-bold mb-1">Rotate / 旋转</h3>
+                            <p className="text-sm text-slate-400">
+                                <b>Option A:</b> Tap with a 2nd finger while dragging.<br/>
+                                <b>Option B:</b> Double tap a placed piece.<br/>
+                                <b>Option C:</b> Use the <span className="inline-block w-4 h-4 border border-cyan-500 rounded-full bg-slate-800"></span> button.<br/>
+                                拖拽时双指点击、双击已放置零件、或使用下方旋转按钮。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 shrink-0 rounded-full bg-cyan-900/30 border border-cyan-500/30 flex items-center justify-center text-2xl">🤟</div>
+                        <div>
+                            <h3 className="text-cyan-100 font-bold mb-1">Flip / 翻转</h3>
+                            <p className="text-sm text-slate-400">
+                                <b>Option A:</b> Tap with 3 fingers anywhere.<br/>
+                                <b>Option B:</b> Use the <span className="inline-block w-4 h-4 border border-purple-500 rounded-full bg-slate-800"></span> button.<br/>
+                                三指点击屏幕任意处，或使用下方紫色翻转按钮。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <button 
+                    onClick={onClose}
+                    className="w-full mt-8 py-3 bg-gradient-to-r from-cyan-700 to-blue-700 hover:from-cyan-600 hover:to-blue-600 text-white font-bold rounded shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all"
+                >
+                    GOT IT / 明白了
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const App: React.FC = () => {
   // --- Game State ---
   const [placedPieces, setPlacedPieces] = useState<PlacedPiece[]>([]);
   const [loading, setLoading] = useState(false);
   const [level, setLevel] = useState<number>(1); 
   const [gameMode, setGameMode] = useState<'LEVEL' | 'FREE'>('LEVEL');
+  const [showHelp, setShowHelp] = useState(false);
   
   // --- Viewport State ---
   const [isPortrait, setIsPortrait] = useState(false);
@@ -126,7 +187,16 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // --- Level Management ---
+  // --- Initialization & Level Management ---
+  useEffect(() => {
+      // Check for first visit
+      const hasVisited = localStorage.getItem('hasVisitedIQCore');
+      if (!hasVisited) {
+          setShowHelp(true);
+          localStorage.setItem('hasVisitedIQCore', 'true');
+      }
+  }, []);
+
   const loadLevel = useCallback((lvl: number) => {
     setLoading(true);
     setPlacedPieces([]);
@@ -456,6 +526,8 @@ const App: React.FC = () => {
   return (
     <div className="h-[100dvh] w-full flex flex-col items-center bg-[#050505] font-['Share_Tech_Mono'] overflow-hidden touch-none select-none">
       
+      {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
+
       {/* Header */}
       <header className="w-full shrink-0 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-cyan-900/50 p-2 z-40 flex justify-between items-center shadow-[0_0_20px_rgba(0,255,255,0.1)] h-14 md:h-16">
           <div className="flex items-center gap-2">
@@ -484,8 +556,17 @@ const App: React.FC = () => {
           </div>
           
           <div className="flex gap-2">
+               <button 
+                   onClick={() => setShowHelp(true)}
+                   className="w-8 h-8 md:w-auto md:h-auto md:px-3 md:py-1.5 border border-cyan-500 text-cyan-400 hover:bg-cyan-900/20 rounded flex items-center justify-center"
+                   title="Help"
+               >
+                   <span className="md:hidden font-bold">?</span>
+                   <span className="hidden md:inline text-xs font-bold">HELP / 帮助</span>
+               </button>
+
                <button onClick={() => { setGameMode('LEVEL'); loadLevel(level); }} className={`hidden md:block px-3 py-1.5 border text-xs font-bold transition-all rounded ${gameMode === 'LEVEL' ? 'bg-cyan-900/40 border-cyan-500 text-cyan-100' : 'border-slate-800 text-slate-500'}`}>
-                   CAMPAIGN / 闯关
+                   CAMPAIGN
                </button>
                
                <button 
@@ -493,7 +574,7 @@ const App: React.FC = () => {
                   className={`px-3 py-1.5 border transition-all rounded active:scale-95 flex items-center justify-center ${gameMode === 'FREE' ? 'bg-emerald-900/40 border-emerald-500 text-emerald-100' : 'border-slate-800 text-slate-500 hover:border-emerald-500/50 hover:text-emerald-400'}`}
                   title="Free Mode (Sandbox)"
                >
-                  <span className="hidden md:inline text-xs font-bold">FREE / 自由</span>
+                  <span className="hidden md:inline text-xs font-bold">FREE</span>
                   <span className="md:hidden">
                     {/* Unlock/Open Icon */}
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -505,7 +586,7 @@ const App: React.FC = () => {
                   className="px-3 py-1.5 border border-red-900/30 text-red-500/80 hover:bg-red-900/20 hover:text-red-400 rounded transition-all active:scale-95 flex items-center justify-center"
                   title="Reset Board"
                >
-                  <span className="hidden md:inline text-xs font-bold">RESET / 重置</span>
+                  <span className="hidden md:inline text-xs font-bold">RESET</span>
                   <span className="md:hidden">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
                   </span>
@@ -564,7 +645,7 @@ const App: React.FC = () => {
                                     // We MUST account for GRID_GAP in the absolute position calculation.
                                     left: (isPortrait ? (p.y + bounds.minY) : (p.x + bounds.minX)) * (gridCellSize + GRID_GAP),
                                     top: (isPortrait ? (p.x + bounds.minX) : (p.y + bounds.minY)) * (gridCellSize + GRID_GAP),
-                                    filter: p.isLocked ? 'grayscale(0.5) opacity(0.8)' : 'drop-shadow(0 0 10px rgba(0,255,255,0.2))'
+                                    filter: p.isLocked ? '' : 'drop-shadow(0 0 10px rgba(0,255,255,0.2))'
                                 }}
                             >
                                 <Piece 
@@ -635,7 +716,7 @@ const App: React.FC = () => {
                 <span>Drag 拖动</span>
             </div>
              <div className="mt-4 text-cyan-600/40 font-mono text-[10px] uppercase md:hidden text-center opacity-60">
-                1-Finger Move(1指移动) • 2-Finger Rotate(2指旋转) • 3-Finger Flip(3指翻转)
+                Tip: Use "?" button for help
             </div>
         </section>
 

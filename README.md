@@ -1,20 +1,52 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# IQ-CORE (Cyber Puzzle)
 
-# Run and deploy your AI Studio app
+A web-based recreation of the classic "IQ Puzzler Pro" logic game, featuring a cyberpunk aesthetic, responsive design, and procedurally generated levels.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1JsLJaTlaS--RyOzcMA2ofPCVE1b34DD-
+- **Cyberpunk Aesthetics**: Neon glows, scanlines, and tech-mono typography.
+- **Cross-Platform**: Fully responsive design that adapts to Desktop (Landscape) and Mobile (Portrait).
+- **Procedural Generation**: Infinite levels generated via algorithmic backtracking solvers.
+- **Game Modes**:
+  - **Campaign (闯关)**: Solve progressively harder puzzles with locked starter pieces.
+  - **Free Mode (自由)**: Sandbox mode to create your own patterns.
+- **Touch & Mouse Support**: Optimized for both mouse precision and multi-touch gestures.
 
-## Run Locally
+## How to Play
 
-**Prerequisites:**  Node.js
+### Controls
 
+| Action | Desktop (Mouse/Keyboard) | Mobile (Touch) |
+| :--- | :--- | :--- |
+| **Move** | Drag & Drop | Drag & Drop |
+| **Rotate** | `Space`, `R`, `Arrow Up` or Double Click | Tap with 2nd finger while dragging OR use button |
+| **Flip** | `F`, `Shift` | Tap with 3 fingers OR use button |
+
+### Rules
+
+1. Fit all remaining pieces from the inventory into the grid.
+2. Pieces cannot overlap.
+3. Locked pieces (indicated by a golden border) cannot be moved or rotated.
+
+## Tech Stack
+
+- **React 19**: UI Framework.
+- **TailwindCSS**: Styling engine.
+- **Google GenAI (Gemini)**: Used experimentally for generating unique challenge seeds (optional).
+- **Backtracking Algorithm**: Custom TypeScript implementation to validate boards and generate puzzles client-side.
+
+## Development
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+
+2. Start dev server:
+   ```bash
+   npm run dev
+   ```
+
+## License
+
+MIT
